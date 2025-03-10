@@ -99,7 +99,6 @@ const typeDefs = gql`
   }
 
   # Query
-  
   type Query {
     users: [User]
     cars: [Car]
@@ -125,10 +124,9 @@ const typeDefs = gql`
     createCar(carInput: carInput!): Car
     createRestaurant(restaurantInput: restaurantInput!): Restaurant
     deleteRestaurant(id: ID!): DeleteRestaurant
+    updateRestaurant(restaurantInput: restaurantInput): Restaurant
   }
 `;
-
-// TODO: create an update (PUT or PATCH) mutation
 
 const resolvers = {
   Query: {
@@ -156,6 +154,14 @@ const resolvers = {
       if(index === -1 ) return { success: false, message: "Index not found" }
       restaurants.splice(index, 1);
       return { success: true, message: "Restaurant deleted succesfully" }
+    },
+    updateRestaurant: (_, { restaurantInput}) => {
+      const { id, name } = restaurantInput;
+      const restIndex = restaurants.findIndex((r) => String(r.id) === String(id));
+      if(restIndex === -1) throw new Error("Restaurant not found");
+
+      restaurants[restIndex].name = name;
+      return restaurants[restIndex];
     }
   }
 };
